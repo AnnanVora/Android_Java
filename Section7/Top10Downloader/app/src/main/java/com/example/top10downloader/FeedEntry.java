@@ -50,11 +50,11 @@ public class FeedEntry {
 
     @Override
     public String toString() {
-        return "FeedEntry" +
-            "name=" + name + '\n' +
-            ", artist=" + artist + '\n' +
-            ", releaseDate=" + releaseDate + '\n' +
-            ", summary=" + summary + '\n' +
-            ", imageURL=" + imageURL + '\n';
+        return "FEED ENTRY :-" + "\n\n" +
+            "name = " + name + "\n\n" +
+            "artist = " + artist + "\n\n" +
+            "releaseDate = " + releaseDate + "\n\n" +
+            "summary = " + summary + "\n\n" +
+            "imageURL = " + imageURL + "\n\n";
     }
 }

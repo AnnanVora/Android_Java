@@ -1,31 +1,28 @@
 package com.example.top10downloader;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.StringReader;
 import java.util.ArrayList;
 
-public class ParseApplications {
+class ParseApplications {
 
     private static final String TAG = "ParseApplications";
     private ArrayList<FeedEntry> applications;
 
-    public ParseApplications() {
+    ParseApplications() {
         this.applications = new ArrayList<>();
     }
 
-    public ArrayList<FeedEntry> getApplications() {
+    ArrayList<FeedEntry> getApplications() {
         return applications;
     }
 
-    public boolean parse(String xmlData) {
+    boolean parse(String xmlData) {
 
         boolean status = true;
-        FeedEntry currentRecord;
+        FeedEntry currentRecord = null;
         boolean inEntry = false;
         String textValue = "";
 
@@ -40,7 +37,6 @@ public class ParseApplications {
                 String tagName = xpp.getName();
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
-                        Log.d(TAG, "parse: Starting Tag for " + tagName);
                         if ("entry".equalsIgnoreCase(tagName)) {
                             inEntry = true;
                             currentRecord = new FeedEntry();
@@ -51,7 +47,6 @@ public class ParseApplications {
                         textValue = xpp.getText();
                         break;
                     case XmlPullParser.END_TAG:
-                        Log.d(TAG, "parse: Ending tag for " + tagName);
                         if (inEntry) {
                             if ("entry".equalsIgnoreCase(tagName)) {
                                 applications.add(currentRecord);
@@ -60,7 +55,7 @@ public class ParseApplications {
                                 currentRecord.setName(textValue);
                             } else if ("artist".equalsIgnoreCase(tagName)) {
                                 currentRecord.setArtist(textValue);
-                            } else if ("releasedate".equalsIgnoreCase(tagName)) {
+                            } else if ("releaseDate".equalsIgnoreCase(tagName)) {
                                 currentRecord.setReleaseDate(textValue);
                             } else if ("summary".equalsIgnoreCase(tagName)) {
                                 currentRecord.setSummary(textValue);

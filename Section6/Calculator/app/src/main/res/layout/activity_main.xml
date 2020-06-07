@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageButton
+        android:id="@+id/buttonBack"
+        android:layout_width="51dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:minWidth="48dip"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/buttonMinus"
+        app:layout_constraintTop_toBottomOf="@+id/buttonC"
+        app:srcCompat="@android:drawable/ic_media_rew" />
+
     <EditText
         android:id="@+id/result"
         android:layout_width="wrap_content"
@@ -41,12 +53,12 @@
         android:id="@+id/newNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:ems="10"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
         android:inputType="numberSigned|numberDecimal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -197,7 +209,7 @@
         android:id="@+id/button9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="32dp"
         android:minWidth="48dp"
         android:text="9"
         app:layout_constraintEnd_toEndOf="parent"
@@ -213,5 +225,16 @@
         android:text="NEG"
         app:layout_constraintBaseline_toBaselineOf="@+id/buttonDivide"
         app:layout_constraintStart_toEndOf="@+id/buttonDivide" />
+
+    <Button
+        android:id="@+id/buttonC"
+        android:layout_width="52dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:minWidth="48dip"
+        android:text="CLR "
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/buttonMultiply"
+        app:layout_constraintStart_toEndOf="@+id/buttonMultiply" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

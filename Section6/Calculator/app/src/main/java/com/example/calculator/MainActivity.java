@@ -4,22 +4,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity {
     private EditText result;
     private EditText newNumber;
     private TextView displayOperation;
-
-    // Variables to hold the operands and type of calculations
     private Double operand1 = null;
     private String pendingOperation = "=";
-
     private static final String STATE_PENDING_OPERATION = "PendingOperation";
     private static final String STATE_OPERAND1 = "Operand1";
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
         Button buttonMultiply = findViewById(R.id.buttonMultiply);
         Button buttonMinus = findViewById(R.id.buttonMinus);
         Button buttonPlus = findViewById(R.id.buttonPlus);
+        Button buttonClear = findViewById(R.id.buttonC);
+        Button buttonNeg = findViewById(R.id.buttonNeg);
+        ImageButton buttonBackspace = findViewById(R.id.buttonBack);  // Init buttons
+
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,19 +60,8 @@ public class MainActivity extends AppCompatActivity {
                 newNumber.append(b.getText().toString());
             }
         };
-        button0.setOnClickListener(listener);
-        button1.setOnClickListener(listener);
-        button2.setOnClickListener(listener);
-        button3.setOnClickListener(listener);
-        button4.setOnClickListener(listener);
-        button5.setOnClickListener(listener);
-        button6.setOnClickListener(listener);
-        button7.setOnClickListener(listener);
-        button8.setOnClickListener(listener);
-        button9.setOnClickListener(listener);
-        buttonDot.setOnClickListener(listener);
 
-        View.OnClickListener opListener = new View.OnClickListener() {
+        final View.OnClickListener opListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Button b = (Button) view;
@@ -88,9 +83,17 @@ public class MainActivity extends AppCompatActivity {
         buttonMultiply.setOnClickListener(opListener);
         buttonMinus.setOnClickListener(opListener);
         buttonPlus.setOnClickListener(opListener);
-
-        Button buttonNeg = findViewById(R.id.buttonNeg);
-
+        button0.setOnClickListener(listener);
+        button1.setOnClickListener(listener);
+        button2.setOnClickListener(listener);
+        button3.setOnClickListener(listener);
+        button4.setOnClickListener(listener);
+        button5.setOnClickListener(listener);
+        button6.setOnClickListener(listener);
+        button7.setOnClickListener(listener);
+        button8.setOnClickListener(listener);
+        button9.setOnClickListener(listener);
+        buttonDot.setOnClickListener(listener); // Set listeners
         buttonNeg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,6 +113,26 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newNumber.setText("");
+                result.setText("");
+                pendingOperation = "";
+                displayOperation.setText("");
+                operand1 = null;
+            }
+        });
+        buttonBackspace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = newNumber.getText().toString();
+                String[] split = value.split("");
+                ArrayList<String> values = new ArrayList<>(Arrays.asList(split));
+                values.remove(values.size() - 1);
+                newNumber.setText(myToString(values));
+            }
+        }); // Set listeners
     }
 
     @Override
@@ -124,8 +147,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        pendingOperation = savedInstanceState.getString(STATE_PENDING_OPERATION);
-        operand1 = savedInstanceState.getDouble(STATE_OPERAND1);
+        if (pendingOperation.equals("=")) {
+            pendingOperation = savedInstanceState.getString(STATE_PENDING_OPERATION);
+            if (pendingOperation.equals("")) {
+                findViewById(R.id.buttonC).performClick();
+            }
+        }
+        if (savedInstanceState.getDouble(STATE_OPERAND1) != 0.0) {
+            operand1 = savedInstanceState.getDouble(STATE_OPERAND1);
+        } else {
+            operand1 = null;
+        }
         displayOperation.setText(pendingOperation);
     }
 
@@ -133,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         if (null == operand1) {
             operand1 = value;
         } else {
-            if (pendingOperation.equals("=")) {
+            if ("=".equals(pendingOperation)) {
                 pendingOperation = operation;
             }
             switch (pendingOperation) {
@@ -142,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "/":
                     if (value == 0) {
-                        operand1 = 0.0;
+                        operand1 = Double.NaN;
                     } else {
                         operand1 /= value;
                     }
@@ -156,10 +188,21 @@ public class MainActivity extends AppCompatActivity {
                 case "+":
                     operand1 += value;
                     break;
+                default:
+                    break;
             }
         }
 
-        result.setText(operand1.toString());
+
+            result.setText(operand1.toString());
         newNumber.setText("");
+    }
+
+    private String myToString(ArrayList<String> arrayList) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : arrayList) {
+            sb.append(s);
+        }
+        return sb.toString();
     }
 }
