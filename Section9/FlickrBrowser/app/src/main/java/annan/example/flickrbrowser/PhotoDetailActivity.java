@@ -1,6 +1,7 @@
 package annan.example.flickrbrowser;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,13 +20,16 @@ public class PhotoDetailActivity extends BaseActivity {
         Photo photo = (Photo) intent.getSerializableExtra(PHOTO_TRANSFER);
         if (photo != null) {
             TextView photoTitle = findViewById(R.id.photoTitle);
-            photoTitle.setText("Title: " + photo.getTitle());
+            Resources resources = getResources();
+            String text = resources.getString(R.string.photo_title_text, photo.getTitle());
+            photoTitle.setText(text);
+//             FIXME : Title text -> more efficient way
 
             TextView photoTags = findViewById(R.id.photoTags);
-            photoTags.setText("Tags: " + photo.getTags().replaceAll(" ", "; "));
+//             FIXME : Tags text
 
             TextView photoAuthor = findViewById(R.id.photoAuthor);
-            photoAuthor.setText("Author: " + photo.getAuthor());
+//             FIXME : Author text
 
             ImageView photoImage = findViewById(R.id.photoImage);
             Picasso.get().load(photo.getLink())
