@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="annan.example.flickrbrowser.MainActivity">
     <item
-        android:id="@+id/actionSearch"
-        android:title="Item" />
+        android:id="@+id/action_settings"
+        android:title="Settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/activity_search"
+        app:showAsAction="ifRoom" />
 </menu>

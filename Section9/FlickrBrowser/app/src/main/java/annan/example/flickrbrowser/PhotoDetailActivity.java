@@ -23,13 +23,12 @@ public class PhotoDetailActivity extends BaseActivity {
             Resources resources = getResources();
             String text = resources.getString(R.string.photo_title_text, photo.getTitle());
             photoTitle.setText(text);
-//             FIXME : Title text -> more efficient way
 
             TextView photoTags = findViewById(R.id.photoTags);
-//             FIXME : Tags text
+            photoTags.setText(resources.getString(R.string.photo_tags_text, photo.getTags()));
 
             TextView photoAuthor = findViewById(R.id.photoAuthor);
-//             FIXME : Author text
+
 
             ImageView photoImage = findViewById(R.id.photoImage);
             Picasso.get().load(photo.getLink())

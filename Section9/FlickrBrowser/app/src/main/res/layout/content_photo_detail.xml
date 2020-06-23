@@ -10,6 +10,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/md_white_1000"
         android:padding="8dp">
 
         <androidx.cardview.widget.CardView
