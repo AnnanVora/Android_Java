@@ -9,20 +9,33 @@
 
     <ImageView
         android:id="@+id/thumbnail"
-        android:layout_width="234dp"
-        android:layout_height="167dp"
+        android:layout_width="245dp"
+        android:layout_height="151dp"
         android:layout_weight="1"
         android:contentDescription="@string/browse_image_description"
-        android:scaleType="fitStart"
+        android:scaleType="fitCenter"
         app:srcCompat="@drawable/placeholder" />
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_weight="2"
-        android:textColor="@color/primary_text"
-        tools:text="TextView" />
+    <LinearLayout
+        android:layout_width="245dp"
+        android:layout_height="151dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/blank"
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+
+        <TextView
+            android:id="@+id/blank2"
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+    </LinearLayout>
+
 </LinearLayout>

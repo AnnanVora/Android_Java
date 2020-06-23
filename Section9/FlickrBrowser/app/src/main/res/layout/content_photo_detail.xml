@@ -30,7 +30,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/md_grey_300"
                     tools:text="TextView" />
 
                 <ImageView
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/md_grey_300"
                     tools:text="TextView" />
 
                 <TextView
@@ -58,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/md_grey_300"
                     tools:text="TextView" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
