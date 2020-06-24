@@ -1,6 +1,7 @@
 package annan.example.flickrbrowser;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,8 +49,13 @@ public class MainActivity extends BaseActivity implements GetFlickrJsonData.OnDa
     protected void onResume() {
         Log.d(TAG, "onResume starts");
         super.onResume();
-        GetFlickrJsonData getFlickrJsonData = new GetFlickrJsonData(this, "https://api.flickr.com/services/feeds/photos_public.gne", "en-us", true);
-        getFlickrJsonData.execute("flower, yellow");
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String queryResult = sharedPreferences.getString(FLICKR_QUERY, "");
+        if (queryResult.length() > 0) {
+            GetFlickrJsonData getFlickrJsonData = new GetFlickrJsonData(this, "https://api.flickr.com/services/feeds/photos_public.gne", "en-us", true);
+            getFlickrJsonData.execute(queryResult);
+        }
         Log.d(TAG, "onResume ends");
     }
 
@@ -95,6 +102,6 @@ public class MainActivity extends BaseActivity implements GetFlickrJsonData.OnDa
         Log.d(TAG, "onItemLongClick: starts");
         Intent intent = new Intent(this, PhotoDetailActivity.class);
         intent.putExtra(PHOTO_TRANSFER, flickrRecyclerViewAdapter.getPhoto(position));
-	startActivity(intent);
+	    startActivity(intent);
     }
 }

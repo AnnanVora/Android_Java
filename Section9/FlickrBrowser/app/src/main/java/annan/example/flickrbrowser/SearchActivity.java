@@ -3,7 +3,9 @@ package annan.example.flickrbrowser;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.SearchView;
@@ -31,12 +33,36 @@ public class SearchActivity extends BaseActivity {
         searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
         SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
         searchView.setSearchableInfo(searchableInfo);
-        Log.d(TAG, "onCreateOptionsMenu: " + getComponentName().toString());
-        Log.d(TAG, "onCreateOptionsMenu: hint is " + searchView.getQueryHint());
-        Log.d(TAG, "onCreateOptionsMenu: searchable info is " + searchableInfo.toString());
         searchView.setIconified(false);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "onQueryTextSubmit: called");
+                searchView.clearFocus();
+                finish();
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                sharedPreferences.edit().putString(FLICKR_QUERY, query).apply();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                finish();
+                return false;
+            }
+        });
 
         Log.d(TAG, "onCreateOptionsMenu: returned " + true);
         return true;
     }
+
+
 }

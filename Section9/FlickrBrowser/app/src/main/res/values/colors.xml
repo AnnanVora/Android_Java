@@ -4,6 +4,7 @@
     <color name="primary_dark">@color/md_cyan_700</color>
     <color name="primary_light">@color/md_cyan_100</color>
     <color name="accent">@color/md_amber_500</color>
+    <color name="accent_dark">@color/md_amber_600</color>
     <color name="primary_text">@color/md_grey_900</color>
     <color name="secondary_text">@color/md_grey_600</color>
     <color name="icons">@color/md_white_1000</color>

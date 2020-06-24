@@ -4,7 +4,7 @@
     tools:context="annan.example.flickrbrowser.MainActivity">
     <item
         android:id="@+id/action_search"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/search_icon"
         android:title="@string/activity_search"
         app:showAsAction="ifRoom" />
 </menu>

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -33,19 +34,25 @@ class FlickrRecyclerViewAdapter extends RecyclerView.Adapter<FlickrRecyclerViewA
     }
 
     @Override
-    public void onBindViewHolder(FlickrImageViewHolder holder, int position) {
-        Photo photoItem = photoList.get(position);
-        Log.d(TAG, "onBindViewHolder: " + photoItem.getTitle() + " --> " + position);
-        Picasso.get().load(photoItem.getImage())
+    public void onBindViewHolder(@NonNull FlickrImageViewHolder holder, int position) {
+
+        if (photoList == null || photoList.size() == 0) {
+            holder.thumbnail.setImageResource(R.drawable.placeholder);
+            holder.title.setText(R.string.empty_photo);
+        } else {
+            Photo photoItem = photoList.get(position);
+            Log.d(TAG, "onBindViewHolder: " + photoItem.getTitle() + " --> " + position);
+            Picasso.get().load(photoItem.getImage())
                 .error(R.drawable.placeholder)
                 .placeholder(R.drawable.placeholder)
                 .into(holder.thumbnail);
-        holder.title.setText(photoItem.getTitle());
+            holder.title.setText(photoItem.getTitle());
+        }
     }
 
     @Override
     public int getItemCount() {
-        return ((photoList != null) && (photoList.size() != 0) ? photoList.size() : 0);
+        return ((photoList != null) && (photoList.size() != 0) ? photoList.size() : 1);
     }
 
     void loadNewData(List<Photo> newPhotos) {
