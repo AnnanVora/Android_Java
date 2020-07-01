@@ -8,11 +8,10 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
-            android:name=".MainActivity"
+            android:name="annan.example.flickrbrowser.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,9 +19,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SearchActivity"
+            android:name="annan.example.flickrbrowser.SearchActivity"
             android:label="Search"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="annan.example.flickrbrowser.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="annan.example.flickrbrowser.MainActivity"/>
@@ -34,9 +33,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PhotoDetailActivity"
+            android:name="annan.example.flickrbrowser.PhotoDetailActivity"
             android:label="View Photo Details"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="annan.example.flickrbrowser.MainActivity">
         </activity>
     </application>
 </manifest>
