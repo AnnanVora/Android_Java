@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -34,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ListView contactNames;
     private static final int REQUEST_CODE_READ_CONTACTS = 1;
-    private static boolean READ_CONTACTS_GRANTED = false;
     FloatingActionButton fab = null;
 
     @Override
@@ -49,19 +47,17 @@ public class MainActivity extends AppCompatActivity {
         int hasReadContactPermission = ContextCompat.checkSelfPermission(this, READ_CONTACTS);
         Log.d(TAG, "onCreate: checkSelfPermission = " + hasReadContactPermission);
 
-        if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "onCreate: permission granted");
-            READ_CONTACTS_GRANTED = true;
-        } else {
+        if (hasReadContactPermission != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "onCreate: requesting permission");
-            ActivityCompat.requestPermissions(this, new String[]{READ_CONTACTS}, REQUEST_CODE_READ_CONTACTS);
+            ActivityCompat.requestPermissions(this, new String[] {READ_CONTACTS}, REQUEST_CODE_READ_CONTACTS);
         }
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-                if (READ_CONTACTS_GRANTED) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "fab onClick: starts");
                     String[] projection = {ContactsContract.Contacts.DISPLAY_NAME_PRIMARY};
                     ContentResolver contentResolver = getContentResolver();
@@ -70,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                         null,
                         null,
                         ContactsContract.Contacts.DISPLAY_NAME_PRIMARY);
+
 
                     if (cursor != null) {
                         List<String> contacts = new ArrayList<>();
@@ -81,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                         contactNames.setAdapter(adapter);
                     }
                 } else {
-                    Snackbar.make(view, "This app can't display your contacts unless you grant access", Snackbar.LENGTH_INDEFINITE).setAction("Grant Access", new View.OnClickListener() {
+                    Snackbar.make(view, "This app can't display your contacts unless you...", Snackbar.LENGTH_INDEFINITE).setAction("Grant Access", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, READ_CONTACTS)) {
@@ -91,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
                                 Intent intent = new Intent();
                                 intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                                 Uri uri = Uri.fromParts("package", MainActivity.this.getPackageName(), null);
-                                intent.setData(uri);
                                 Log.d(TAG, "Snackbar onClick: Intent Uri = " + uri.toString());
+                                intent.setData(uri);
                                 MainActivity.this.startActivity(intent);
                             }
                         }
@@ -101,26 +98,9 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 Log.d(TAG, "fab onClick: ends");
-
-
             }
         });
         Log.d(TAG, "onCreate: ends");
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult: starts");
-
-        if (requestCode == REQUEST_CODE_READ_CONTACTS) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "onRequestPermissionsResult: permission granted");
-                READ_CONTACTS_GRANTED = true;
-            } else {
-                Log.d(TAG, "onRequestPermissionsResult: permission denied");
-            }
-        }
-        Log.d(TAG, "onRequestPermissionsResult: ends");
     }
 
     @Override
