@@ -7,7 +7,7 @@ import android.util.Log;
 
 /**
  * Basic Database class for the app.
- * The Only class that should use this is the AppProvider
+ * The Only class that should use this is {@link AppProvider}
  */
 
 class AppDatabase extends SQLiteOpenHelper {
