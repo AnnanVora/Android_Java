@@ -25,14 +25,14 @@ public class AppProvider extends ContentProvider {
     static final String CONTENT_AUTHORITY = "annan.example.tasktimer.provider";
     public static final Uri CONTENT_AUTHORITY_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    private static final int TASKS               = 100;
-    private static final int TASKS_ID            = 101;
-    private static final int TIMINGS             = 200;
-    private static final int TIMINGS_ID          = 201;
-//    private static final int TASK_TIMING         = 300;
+    private static final int TASKS = 100;
+    private static final int TASKS_ID = 101;
+    private static final int TIMINGS = 200;
+    private static final int TIMINGS_ID = 201;
+    //    private static final int TASK_TIMING         = 300;
 //    private static final int TASK_TIMINGS_ID     = 301;
-    private static final int TASKS_DURATIONS     = 400;
-    private static final int TASKS_DURATIONS_ID  = 401;
+    private static final int TASKS_DURATIONS = 400;
+    private static final int TASKS_DURATIONS_ID = 401;
 
 
     @Override

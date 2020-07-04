@@ -23,10 +23,10 @@ class AppDatabase extends SQLiteOpenHelper {
         Log.d(TAG, "onCreate: starts");
         String sSQL;
         sSQL = "CREATE TABLE IF NOT EXISTS " + TasksContract.TABLE_NAME + "(" +
-                TasksContract.Columns._ID + " INTEGER PRIMARY KEY NOT NULL, " +
-                TasksContract.Columns.TASKS_NAME + " TEXT NOT NULL, " +
-                TasksContract.Columns.TASKS_DESCRIPTION + " TEXT, " +
-                TasksContract.Columns.TASKS_SORTORDER + " INTEGER" + ");";
+            TasksContract.Columns._ID + " INTEGER PRIMARY KEY NOT NULL, " +
+            TasksContract.Columns.TASKS_NAME + " TEXT NOT NULL, " +
+            TasksContract.Columns.TASKS_DESCRIPTION + " TEXT, " +
+            TasksContract.Columns.TASKS_SORTORDER + " INTEGER" + ");";
 
         Log.d(TAG, "sSQL = " + sSQL);
         db.execSQL(sSQL);
@@ -52,6 +52,7 @@ class AppDatabase extends SQLiteOpenHelper {
 
     /**
      * Get an instance of the app's singleton database helper object.
+     *
      * @param context the content provider's context.
      * @return a SQLite database helper object.
      */
