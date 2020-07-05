@@ -1,6 +1,8 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="AndroidLintHardcodedText" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="AndroidLintSetTextI18n" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="JavaDoc" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="TOP_LEVEL_CLASS_OPTIONS">
         <value>
@@ -31,6 +33,9 @@
       <option name="IGNORE_DUPLICATED_THROWS" value="false" />
       <option name="IGNORE_POINT_TO_ITSELF" value="false" />
       <option name="myAdditionalJavadocTags" value="override" />
+    </inspection_tool>
+    <inspection_tool class="SwitchStatementWithTooFewBranches" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="m_limit" value="2" />
     </inspection_tool>
   </profile>
 </component>

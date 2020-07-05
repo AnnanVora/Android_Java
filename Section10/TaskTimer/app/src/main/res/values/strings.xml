@@ -18,7 +18,8 @@
     <string name="addedit_sortorder_hint">Order for sorting (low to high)</string>
     <string name="addedit_save">Save</string>
     <string name="title_activity_add_edit">AddEditActivity</string>
-
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="instructions_heading">Instructions</string>
+    <string name="instructions">Use the add button (+) in the toolbar above to create new tasks.\n\nTasks with lower sort order will be placed higher up in the list. Tasks with the same sort order will be sorted alphabetically.\n\nTapping a task will start the timer for that task (and will stop the timer for any previous task that was being timed.)</string>
 </resources>

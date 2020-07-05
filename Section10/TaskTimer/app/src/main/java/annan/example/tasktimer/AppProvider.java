@@ -80,7 +80,11 @@ public class AppProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = openHelper.getReadableDatabase();
-        return queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+        Log.d(TAG, "query: rows in returned cursor = " + cursor.getCount());
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     @Nullable
@@ -138,6 +142,14 @@ public class AppProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
         }
+
+        if (recordID >= 0) {
+            Log.d(TAG, "insert: setting notified change with " + uri);
+            getContext().getContentResolver().notifyChange(uri, null);
+        } else {
+            Log.d(TAG, "insert: nothing inserted");
+            System.out.println("Hello");
+        }
         Log.d(TAG, "insert: Exiting, returning " + returnUri);
         return returnUri;
     }
@@ -183,6 +195,13 @@ public class AppProvider extends ContentProvider {
 //                break;
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
+        }
+
+        if (count > 0) {
+            Log.d(TAG, "delete: Setting notifyChange with " + uri);
+            getContext().getContentResolver().notifyChange(uri, null);
+        } else {
+            Log.d(TAG, "delete: nothing deleted");
         }
         Log.d(TAG, "delete: exiting, returning " + count);
         return count;
@@ -230,6 +249,14 @@ public class AppProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
         }
+
+        if (count > 0) {
+            Log.d(TAG, "update" + ": Setting notifyChange with " + uri);
+            getContext().getContentResolver().notifyChange(uri, null);
+        } else {
+            Log.d(TAG, "update: nothing updated");
+        }
+
         Log.d(TAG, "update: exiting, returning " + count);
         return count;
     }
@@ -240,7 +267,7 @@ public class AppProvider extends ContentProvider {
         matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME, TASKS);
         matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME + "/#", TASKS_ID);
         matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME + "/#", TASKS_ID);
-//        FIXME
+//        TODO
 //        matcher.addURI(CONTENT_AUTHORITY, TimingsContract.TABLE_NAME, TIMING);
 //        matcher.addURI(CONTENT_AUTHORITY, TimingsContract.TABLE_NAME + "/#", TIMINGS_ID);
 //        matcher.addURI(CONTENT_AUTHORITY, DurationsContract.TABLE_NAME, TASKS_DURATIONS);

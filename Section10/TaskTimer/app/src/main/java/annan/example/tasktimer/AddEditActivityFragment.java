@@ -2,6 +2,7 @@ package annan.example.tasktimer;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -106,6 +107,10 @@ public class AddEditActivityFragment extends Fragment {
                         break;
                 }
                 Log.d(TAG, "onClick: done editing");
+
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+                Log.d(TAG, "onClick: exiting");
             }
         });
         Log.d(TAG, "onCreateView: exiting");

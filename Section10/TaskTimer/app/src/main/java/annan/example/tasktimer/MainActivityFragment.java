@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.security.InvalidParameterException;
 
@@ -20,8 +22,8 @@ import java.security.InvalidParameterException;
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MainActivityFragment";
-
     public static final int LOADER_ID = 0;
+    private CursorRecyclerViewAdapter adapter;
 
     public MainActivityFragment() {
         Log.d(TAG, "MainActivityFragment: starts");
@@ -38,7 +40,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: starts");
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        RecyclerView recyclerView = view.findViewById(R.id.task_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        adapter = new CursorRecyclerViewAdapter(null);
+        recyclerView.setAdapter(adapter);
+
+        Log.d(TAG, "onCreateView: returning");
+        return view;
     }
 
     @NonNull
@@ -51,7 +61,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                                TasksContract.Columns.TASKS_DESCRIPTION,
                                TasksContract.Columns.TASKS_SORTORDER};
 
-        String sortOrder = TasksContract.Columns.TASKS_SORTORDER + "," + TasksContract.Columns.TASKS_NAME;
+        String sortOrder = TasksContract.Columns.TASKS_SORTORDER + "," + TasksContract.Columns.TASKS_NAME + " COLLATE NOCASE";
         switch (id) {
             case LOADER_ID:
                 return new CursorLoader(getActivity(), TasksContract.CONTENT_URI, projection, null, null, sortOrder);
@@ -63,22 +73,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "Entering onLoadFinished: starts");
-        int count = -1;
+        adapter.swapCursor(data);
+        int count = adapter.getItemCount();
 
-        if (data != null) {
-            while (data.moveToNext()) {
-                for (int i = 0; i < data.getColumnCount(); i++) {
-                    Log.d(TAG, "onLoadFinished: " + data.getColumnName(i) + ": " + data.getString(i));
-                }
-                Log.d(TAG, "onLoadFinished: *********************************************");
-            }
-            count = data.getCount();
-        }
         Log.d(TAG, "onLoadFinished: count = " + count);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         Log.d(TAG, "onLoaderReset: starts");
+        adapter.swapCursor(null);
     }
 }
