@@ -15,10 +15,17 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
 
     private static final String TAG = "CursorRecyclerViewAdapt";
     private Cursor cursor;
+    private OnTaskClickListener listener;
 
-    public CursorRecyclerViewAdapter(Cursor cursor) {
+    interface OnTaskClickListener {
+        void onEditClick(Task task);
+        void onDeleteClick(Task task);
+    }
+
+    public CursorRecyclerViewAdapter(Cursor cursor, OnTaskClickListener listener) {
         Log.d(TAG, "CursorRecyclerViewAdapter: constructor called");
         this.cursor = cursor;
+        this.listener = listener;
     }
 
     @NonNull
@@ -57,8 +64,20 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
                 @Override
                 public void onClick(View v) {
                     Log.d(TAG, "onClick: starts");
-                    Log.d(TAG, "onClick: button with id " + v.getId() + " clicked");
-                    Log.d(TAG, "onClick: task name is " + task.getName());
+                    switch (v.getId()) {
+                        case R.id.tli_edit:
+                            if (listener != null) {
+                                listener.onEditClick(task);
+                            }
+                            break;
+                        case R.id.tli_delete:
+                            if (listener != null) {
+                                listener.onDeleteClick(task);
+                            }
+                            break;
+                        default:
+                            throw new IllegalArgumentException();
+                    }
                 }
             };
 

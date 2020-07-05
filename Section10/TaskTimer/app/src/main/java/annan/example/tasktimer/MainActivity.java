@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener {
 
     private static final String TAG = "MainActivity";
     private boolean twoPane = false;
@@ -49,7 +49,17 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    
+
+    @Override
+    public void onEditClick(Task task) {
+        taskEditRequest(task);
+    }
+
+    @Override
+    public void onDeleteClick(Task task) {
+
+    }
+
     private void taskEditRequest(@Nullable Task task) {
         if (twoPane) {
             Log.d(TAG, "taskEditRequest: in two-pane mode (tablet)");

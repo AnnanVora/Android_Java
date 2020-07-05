@@ -44,7 +44,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         RecyclerView recyclerView = view.findViewById(R.id.task_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new CursorRecyclerViewAdapter(null);
+        adapter = new CursorRecyclerViewAdapter(null, (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity());
         recyclerView.setAdapter(adapter);
 
         Log.d(TAG, "onCreateView: returning");
