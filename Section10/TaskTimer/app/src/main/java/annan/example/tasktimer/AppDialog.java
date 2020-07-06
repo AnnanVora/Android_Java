@@ -23,8 +23,8 @@ public class AppDialog extends DialogFragment {
     private DialogEvents dialogEvents;
 
     interface DialogEvents {
-        void onPositiveDialogEvent(int dialogID, Bundle args);
-        void onNegativeDialogEvent(int dialogID, Bundle args);
+        void onPositiveDialogResult(int dialogID, Bundle args);
+        void onNegativeDialogResult(int dialogID, Bundle args);
         void onDialogCancel(int dialogID);
     }
 
@@ -69,10 +69,10 @@ public class AppDialog extends DialogFragment {
             positiveStringID = args.getInt(DIALOG_POSITIVE_RID);
             negativeStringID = args.getInt(DIALOG_NEGATIVE_RID);
             if (positiveStringID == 0) {
-                positiveStringID = R.id.ok;
+                positiveStringID = R.string.ok;
             }
             if (negativeStringID == 0) {
-                negativeStringID = R.id.cancel;
+                negativeStringID = R.string.cancel;
             }
         } else {
             throw new NoSuchElementException("Must pass DIALOG_ID and DIALOG_MESSAGE in the Bundle");
@@ -82,7 +82,7 @@ public class AppDialog extends DialogFragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (dialogEvents != null) {
-                        dialogEvents.onPositiveDialogEvent(dialogID, args);
+                        dialogEvents.onPositiveDialogResult(dialogID, args);
                     }
                 }
             })
@@ -90,11 +90,11 @@ public class AppDialog extends DialogFragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (dialogEvents != null) {
-                        dialogEvents.onNegativeDialogEvent(dialogID, args);
+                        dialogEvents.onNegativeDialogResult(dialogID, args);
                     }
                 }
             });
-        return super.onCreateDialog(savedInstanceState);
+        return builder.create();
     }
 
     @Override

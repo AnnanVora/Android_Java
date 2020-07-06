@@ -11,13 +11,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-public class MainActivity extends AppCompatActivity implements  CursorRecyclerViewAdapter.OnTaskClickListener,
-                                                               AddEditActivityFragment.OnSaveClicked {
+public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener,
+                                                               AddEditActivityFragment.OnSaveClicked,
+                                                               AppDialog.DialogEvents {
 
     private static final String TAG = "MainActivity";
     private static final String ADD_EDIT_FRAGMENT = "AddEditFragment";
     private boolean isTwoPane = false;
     public static final int DELETE_DIALOG_ID = 1;
+    private static final String TASK_ID_STRING = "TaskID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +82,10 @@ public class MainActivity extends AppCompatActivity implements  CursorRecyclerVi
         args.putInt(AppDialog.DIALOG_ID, DELETE_DIALOG_ID);
         args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.deldiag_message, task.get_id(), task.getName()));
         args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.deldiag_positive_caption);
+        args.putLong(TASK_ID_STRING, task.get_id());
 
         dialog.setArguments(args);
         dialog.show(getSupportFragmentManager(), null);
-        getContentResolver().delete(TasksContract.buildTaskUri(task.get_id()), null, null);
     }
 
     private void taskEditAddRequest(@Nullable Task task) {
@@ -96,9 +98,9 @@ public class MainActivity extends AppCompatActivity implements  CursorRecyclerVi
             args.putSerializable(Task.class.getSimpleName(), task);
             fragment.setArguments(args);
 
-            getSupportFragmentManager() .beginTransaction()
-                                        .replace(R.id.task_details_container, fragment)
-                                        .commit();
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.task_details_container, fragment)
+                .commit();
         } else {
             Log.d(TAG, "taskEditAddRequest: in single-pane mode (phone)");
             Intent detailIntent = new Intent(this, AddEditActivity.class);
@@ -107,5 +109,25 @@ public class MainActivity extends AppCompatActivity implements  CursorRecyclerVi
             }
             startActivity(detailIntent);
         }
+    }
+
+    @Override
+    public void onPositiveDialogResult(int dialogID, Bundle args) {
+        Log.d(TAG, "onPositiveDialogResult: called");
+        long taskID = args.getLong(TASK_ID_STRING);
+        if (BuildConfig.DEBUG && taskID == 0) throw new AssertionError("Task ID is 0");
+        getContentResolver().delete(TasksContract.buildTaskUri(taskID), null, null);
+    }
+
+    @Override
+    public void onNegativeDialogResult(int dialogID, Bundle args) {
+        Log.d(TAG, "onNegativeDialogResult: called");
+        Log.d(TAG, "onNegativeDialogResult: Stub!");
+    }
+
+    @Override
+    public void onDialogCancel(int dialogID) {
+        Log.d(TAG, "onDialogCancel: called");
+        Log.d(TAG, "onNegativeDialogResult: Stub!");
     }
 }
