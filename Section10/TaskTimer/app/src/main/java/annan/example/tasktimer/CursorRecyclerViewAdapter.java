@@ -31,14 +31,12 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder: new view requested");
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_list_items, parent, false);
         return new TaskViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: starts");
         if (cursor == null || cursor.getCount() == 0) {
             Log.d(TAG, "onBindViewHolder: providing instructions");
             holder.name.setText(R.string.instructions_heading);
@@ -63,7 +61,6 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
             View.OnClickListener buttonListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "onClick: starts");
                     switch (v.getId()) {
                         case R.id.tli_edit:
                             if (listener != null) {
@@ -88,8 +85,6 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount: starts");
-
         if (cursor == null || (cursor.getCount()) == 0) {
             return 1;
         } else {

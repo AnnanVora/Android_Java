@@ -9,12 +9,15 @@ import android.view.MenuItem;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
-public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener {
+public class MainActivity extends AppCompatActivity implements  CursorRecyclerViewAdapter.OnTaskClickListener,
+                                                               AddEditActivityFragment.OnSaveClicked {
 
     private static final String TAG = "MainActivity";
-    private boolean twoPane = false;
     private static final String ADD_EDIT_FRAGMENT = "AddEditFragment";
+    private boolean isTwoPane = false;
+    public static final int DELETE_DIALOG_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,19 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (findViewById(R.id.task_details_container) != null) {
+            isTwoPane = true;
+        }
+    }
+
+    @Override
+    public void onSaveClicked() {
+        Log.d(TAG, "onSaveClicked: starts");
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.task_details_container);
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
     }
 
     @Override
@@ -36,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
         switch (id) {
             case R.id.menumain_addTask:
-                taskEditRequest(null);
+                taskEditAddRequest(null);
             case R.id.menumain_showDurations:
                 break;
             case R.id.menumain_settings:
@@ -52,19 +68,39 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     @Override
     public void onEditClick(Task task) {
-        taskEditRequest(task);
+        taskEditAddRequest(task);
     }
 
     @Override
     public void onDeleteClick(Task task) {
+        Log.d(TAG, "onDeleteClick: starts");
 
+        AppDialog dialog = new AppDialog();
+        Bundle args = new Bundle();
+        args.putInt(AppDialog.DIALOG_ID, DELETE_DIALOG_ID);
+        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.deldiag_message, task.get_id(), task.getName()));
+        args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.deldiag_positive_caption);
+
+        dialog.setArguments(args);
+        dialog.show(getSupportFragmentManager(), null);
+        getContentResolver().delete(TasksContract.buildTaskUri(task.get_id()), null, null);
     }
 
-    private void taskEditRequest(@Nullable Task task) {
-        if (twoPane) {
-            Log.d(TAG, "taskEditRequest: in two-pane mode (tablet)");
+    private void taskEditAddRequest(@Nullable Task task) {
+        if (isTwoPane) {
+            Log.d(TAG, "taskEditAddRequest: in two-pane mode (tablet)");
+
+            AddEditActivityFragment fragment = new AddEditActivityFragment();
+
+            Bundle args = new Bundle();
+            args.putSerializable(Task.class.getSimpleName(), task);
+            fragment.setArguments(args);
+
+            getSupportFragmentManager() .beginTransaction()
+                                        .replace(R.id.task_details_container, fragment)
+                                        .commit();
         } else {
-            Log.d(TAG, "taskEditRequest: in single-pane mode (phone)");
+            Log.d(TAG, "taskEditAddRequest: in single-pane mode (phone)");
             Intent detailIntent = new Intent(this, AddEditActivity.class);
             if (task != null) {
                 detailIntent.putExtra(Task.class.getSimpleName(), task);

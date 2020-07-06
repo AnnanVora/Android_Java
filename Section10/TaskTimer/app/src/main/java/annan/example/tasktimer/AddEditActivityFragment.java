@@ -1,8 +1,9 @@
 package annan.example.tasktimer;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,14 +31,38 @@ public class AddEditActivityFragment extends Fragment {
     private EditText descriptionTextView;
     private EditText sortOrderTextView;
     private Button saveButton;
+    private OnSaveClicked saveListener = null;
+
+    interface OnSaveClicked {
+        void onSaveClicked();
+    }
 
     public AddEditActivityFragment() {
         Log.d(TAG, "AddEditActivityFragment: Constructor called");
     }
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        Log.d(TAG, "onAttach: starts");
+        super.onAttach(context);
+
+        Activity activity = getActivity();
+        if (!(activity instanceof OnSaveClicked)) {
+            throw new ClassCastException(activity.getClass().getSimpleName() + " must implement AddEditActivity.OnSaveClicked");
+        }
+        saveListener = (OnSaveClicked) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        saveListener = null;
+    }
+
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: starts");
         View view = inflater.inflate(R.layout.fragment_add_edit, container, false);
 
@@ -46,9 +71,9 @@ public class AddEditActivityFragment extends Fragment {
         sortOrderTextView = view.findViewById(R.id.addedit_sortOrder);
         saveButton = view.findViewById(R.id.addedit_save);
 
-        Bundle args = getActivity().getIntent().getExtras();
-        final Task task;
+        Bundle args = getArguments();
 
+        final Task task;
         if (args != null) {
             Log.d(TAG, "onCreateView: retrieving task details");
             task = (Task) args.getSerializable(Task.class.getSimpleName());
@@ -108,8 +133,9 @@ public class AddEditActivityFragment extends Fragment {
                 }
                 Log.d(TAG, "onClick: done editing");
 
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                startActivity(intent);
+                if (saveListener != null) {
+                    saveListener.onSaveClicked();
+                }
                 Log.d(TAG, "onClick: exiting");
             }
         });
