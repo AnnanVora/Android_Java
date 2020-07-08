@@ -65,7 +65,7 @@ public class AppProvider extends ContentProvider {
 //            case TIMINGS_ID:
 //                queryBuilder.setTables(TimingsContract.TABLE_NAME);
 //                long timingID = TimingsContract.getTimingID(uri);
-//                queryBuilder.appendWhere(TasksContract.Columns._ID + " = " + timingID);
+//                queryBuilder.appendWhere(TimingsContract.Columns._ID + " = " + timingID);
 //                break;
 //            case TASKS_DURATIONS:
 //                queryBuilder.setTables(DurationsContract.TABLE_NAME);
@@ -73,10 +73,11 @@ public class AppProvider extends ContentProvider {
 //            case TASKS_DURATIONS_ID:
 //                queryBuilder.setTables(DurationsContract.TABLE_NAME);
 //                long durationID = DurationsContract.getDurationID(uri);
-//                queryBuilder.appendWhere(TasksContract.Columns._ID + " = " + durationID);
+//                queryBuilder.appendWhere(DurationsContract.Columns._ID + " = " + durationID);
 //                break;
             default:
-                throw new IllegalArgumentException("Unknown URI");
+                throw new IllegalArgumentException("Unknown URI: " + uri);
+
         }
 
         SQLiteDatabase db = openHelper.getReadableDatabase();
@@ -105,7 +106,7 @@ public class AppProvider extends ContentProvider {
 //            case TASKS_DURATIONS_ID:
 //                return DurationsContract.CONTENT_ITEM_TYPE;
             default:
-                throw new IllegalArgumentException("Unknown URI");
+                throw new IllegalArgumentException("unknown Uri: " + uri);
         }
     }
 

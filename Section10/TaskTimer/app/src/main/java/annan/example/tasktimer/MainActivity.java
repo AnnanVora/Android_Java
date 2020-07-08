@@ -1,25 +1,35 @@
 package annan.example.tasktimer;
 
+import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener,
-                                                               AddEditActivityFragment.OnSaveClicked,
-                                                               AppDialog.DialogEvents {
+    AddEditActivityFragment.OnSaveClicked,
+    AppDialog.DialogEvents {
 
+    public static final int DIALOG_ID_DELETE = 1;
+    public static final int DIALOG_ID_CANCEL_EDIT = 2;
     private static final String TAG = "MainActivity";
-    private static final String ADD_EDIT_FRAGMENT = "AddEditFragment";
-    private boolean isTwoPane = false;
-    public static final int DELETE_DIALOG_ID = 1;
     private static final String TASK_ID_STRING = "TaskID";
+    private boolean isTwoPane = false;
+    private AlertDialog dialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,17 +65,60 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         switch (id) {
             case R.id.menumain_addTask:
                 taskEditAddRequest(null);
+                break;
             case R.id.menumain_showDurations:
                 break;
             case R.id.menumain_settings:
                 break;
             case R.id.menumain_showAbout:
+                showAboutDialog();
                 break;
             case R.id.menumain_generate:
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void showAboutDialog() {
+        @SuppressLint("InflateParams") View messageView = getLayoutInflater().inflate(R.layout.about, null, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.app_name);
+        builder.setIcon(R.mipmap.ic_launcher);
+        builder.setView(messageView);
+
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (MainActivity.this.dialog != null && MainActivity.this.dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(true);
+        TextView tv = messageView.findViewById(R.id.about_version);
+        tv.setText("v" + BuildConfig.VERSION_NAME);
+
+        TextView about_url = messageView.findViewById(R.id.about_url);
+        if (about_url != null) {
+            about_url.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    String s = ((TextView) v).getText().toString();
+                    intent.setData(Uri.parse(s));
+                    try {
+                        startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(MainActivity.this, "No browser application found, cannot visit world-wide-web", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
+        dialog.show();
     }
 
     @Override
@@ -79,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
         AppDialog dialog = new AppDialog();
         Bundle args = new Bundle();
-        args.putInt(AppDialog.DIALOG_ID, DELETE_DIALOG_ID);
+        args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_DELETE);
         args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.deldiag_message, task.get_id(), task.getName()));
         args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.deldiag_positive_caption);
         args.putLong(TASK_ID_STRING, task.get_id());
@@ -114,20 +167,58 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     @Override
     public void onPositiveDialogResult(int dialogID, Bundle args) {
         Log.d(TAG, "onPositiveDialogResult: called");
-        long taskID = args.getLong(TASK_ID_STRING);
-        if (BuildConfig.DEBUG && taskID == 0) throw new AssertionError("Task ID is 0");
-        getContentResolver().delete(TasksContract.buildTaskUri(taskID), null, null);
+        switch (dialogID) {
+            case DIALOG_ID_DELETE:
+                long taskID = args.getLong(TASK_ID_STRING);
+                if (BuildConfig.DEBUG && taskID == 0) throw new AssertionError("Task ID is 0");
+                getContentResolver().delete(TasksContract.buildTaskUri(taskID), null, null);
+                break;
+            case DIALOG_ID_CANCEL_EDIT:
+                break;
+        }
     }
 
     @Override
     public void onNegativeDialogResult(int dialogID, Bundle args) {
         Log.d(TAG, "onNegativeDialogResult: called");
-        Log.d(TAG, "onNegativeDialogResult: Stub!");
+        switch (dialogID) {
+            case DIALOG_ID_DELETE:
+                break;
+            case DIALOG_ID_CANCEL_EDIT:
+                break;
+        }
     }
 
     @Override
     public void onDialogCancel(int dialogID) {
         Log.d(TAG, "onDialogCancel: called");
-        Log.d(TAG, "onNegativeDialogResult: Stub!");
+        Log.d(TAG, "onDialogCancel: Stub!");
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: called");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        AddEditActivityFragment fragment = (AddEditActivityFragment) fragmentManager.findFragmentById(R.id.task_details_container);
+        if (fragment == null || fragment.canClose()) {
+            super.onBackPressed();
+        } else {
+            AppDialog dialog = new AppDialog();
+            Bundle args = new Bundle();
+            args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_DELETE);
+            args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.cancelEditDialogMessage));
+            args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.cancelEditDialog_positive_caption);
+            args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDialog_negative_caption);
+            dialog.setArguments(args);
+            dialog.show(getSupportFragmentManager(), null);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
     }
 }

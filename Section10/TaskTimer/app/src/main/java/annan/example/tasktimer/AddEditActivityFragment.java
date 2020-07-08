@@ -20,6 +20,7 @@ public class AddEditActivityFragment extends Fragment {
 
     private static final String TAG = "AddEditActivityFragment";
 
+
     public enum FragmentEditMode {
         EDIT,
         ADD
@@ -141,5 +142,9 @@ public class AddEditActivityFragment extends Fragment {
         });
         Log.d(TAG, "onCreateView: exiting");
         return view;
+    }
+
+    public boolean canClose() {
+        return false;
     }
 }

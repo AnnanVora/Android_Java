@@ -1,6 +1,5 @@
 package annan.example.tasktimer;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +8,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.NoSuchElementException;
@@ -104,11 +104,5 @@ public class AppDialog extends DialogFragment {
             int dialogID = getArguments().getInt(DIALOG_ID);
             dialogEvents.onDialogCancel(dialogID);
         }
-    }
-
-    @Override
-    public void onDismiss(@NonNull DialogInterface dialog) {
-        Log.d(TAG, "onDismiss: starts");
-        super.onDismiss(dialog);
     }
 }
