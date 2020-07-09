@@ -1,5 +1,6 @@
 package annan.example.tasktimer;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -14,6 +15,8 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 public class AddEditActivityFragment extends Fragment {
@@ -21,7 +24,7 @@ public class AddEditActivityFragment extends Fragment {
     private static final String TAG = "AddEditActivityFragment";
 
 
-    public enum FragmentEditMode {
+    private enum FragmentEditMode {
         EDIT,
         ADD
     }
@@ -31,7 +34,6 @@ public class AddEditActivityFragment extends Fragment {
     private EditText nameTextView;
     private EditText descriptionTextView;
     private EditText sortOrderTextView;
-    private Button saveButton;
     private OnSaveClicked saveListener = null;
 
     interface OnSaveClicked {
@@ -55,13 +57,8 @@ public class AddEditActivityFragment extends Fragment {
         saveListener = (OnSaveClicked) activity;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        saveListener = null;
-    }
-
     @Nullable
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: starts");
@@ -70,7 +67,7 @@ public class AddEditActivityFragment extends Fragment {
         nameTextView = view.findViewById(R.id.addedit_name);
         descriptionTextView = view.findViewById(R.id.addedit_description);
         sortOrderTextView = view.findViewById(R.id.addedit_sortOrder);
-        saveButton = view.findViewById(R.id.addedit_save);
+        Button saveButton = view.findViewById(R.id.addedit_save);
 
         Bundle args = getArguments();
 
@@ -108,6 +105,10 @@ public class AddEditActivityFragment extends Fragment {
 
                 switch (mode) {
                     case EDIT:
+                        if (task == null) {
+                            // Remove lint warning
+                            break;
+                        }
                         if (!nameTextView.getText().toString().equals(task.getName())) {
                             values.put(TasksContract.Columns.TASKS_NAME, nameTextView.getText().toString());
                         }
@@ -142,6 +143,26 @@ public class AddEditActivityFragment extends Fragment {
         });
         Log.d(TAG, "onCreateView: exiting");
         return view;
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
+        saveListener = null;
     }
 
     public boolean canClose() {

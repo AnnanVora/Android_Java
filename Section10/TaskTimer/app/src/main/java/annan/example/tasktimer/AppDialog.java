@@ -24,7 +24,9 @@ public class AppDialog extends DialogFragment {
 
     interface DialogEvents {
         void onPositiveDialogResult(int dialogID, Bundle args);
+
         void onNegativeDialogResult(int dialogID, Bundle args);
+
         void onDialogCancel(int dialogID);
     }
 

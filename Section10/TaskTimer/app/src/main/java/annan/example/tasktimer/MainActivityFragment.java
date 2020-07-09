@@ -57,9 +57,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         Log.d(TAG, "onCreateLoader: starts with id " + id);
         String[] projection = {TasksContract.Columns._ID,
-                               TasksContract.Columns.TASKS_NAME,
-                               TasksContract.Columns.TASKS_DESCRIPTION,
-                               TasksContract.Columns.TASKS_SORTORDER};
+            TasksContract.Columns.TASKS_NAME,
+            TasksContract.Columns.TASKS_DESCRIPTION,
+            TasksContract.Columns.TASKS_SORTORDER};
 
         String sortOrder = TasksContract.Columns.TASKS_SORTORDER + "," + TasksContract.Columns.TASKS_NAME + " COLLATE NOCASE";
         switch (id) {

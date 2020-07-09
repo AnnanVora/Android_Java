@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     public static final int DIALOG_ID_DELETE = 1;
     public static final int DIALOG_ID_CANCEL_EDIT = 2;
+    private static final int DIALOG_ID_CANCEL_EDIT_UP = 3;
     private static final String TAG = "MainActivity";
     private static final String TASK_ID_STRING = "TaskID";
     private boolean isTwoPane = false;
@@ -38,8 +40,29 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (findViewById(R.id.task_details_container) != null) {
-            isTwoPane = true;
+        isTwoPane = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+        Log.d(TAG, "onCreate: isTwoPane is " + isTwoPane);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        boolean editing = fragmentManager.findFragmentById(R.id.task_details_container) != null;
+        Log.d(TAG, "onCreate: editing = " + editing);
+
+        View addEditLayout = findViewById(R.id.task_details_container);
+        View mainFragment = findViewById(R.id.fragment);
+
+        if (isTwoPane) {
+            Log.d(TAG, "onCreate: twoPaneMode");
+            mainFragment.setVisibility(View.VISIBLE);
+            addEditLayout.setVisibility(View.VISIBLE);
+        } else if (editing) {
+            Log.d(TAG, "onCreate: singlePaneEditing");
+            {
+                mainFragment.setVisibility(View.GONE);
+            }
+        } else {
+            Log.d(TAG, "onCreate: singlePaneAdding");
+            mainFragment.setVisibility(View.VISIBLE);
+            addEditLayout.setVisibility(View.GONE);
         }
     }
 
@@ -49,6 +72,14 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.task_details_container);
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
+
+        View addEditLayout = findViewById(R.id.task_details_container);
+        View mainFragment = findViewById(R.id.fragment);
+
+        if (!isTwoPane) {
+            addEditLayout.setVisibility(View.GONE);
+            mainFragment.setVisibility(View.VISIBLE);
         }
     }
 
@@ -67,14 +98,27 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                 taskEditAddRequest(null);
                 break;
             case R.id.menumain_showDurations:
+                Log.d(TAG, "onOptionsItemSelected: Not implemented; Stub!");
                 break;
             case R.id.menumain_settings:
+                Log.d(TAG, "onOptionsItemSelected: Not implemented; Stub!");
                 break;
             case R.id.menumain_showAbout:
                 showAboutDialog();
                 break;
             case R.id.menumain_generate:
+                Log.d(TAG, "onOptionsItemSelected: Not implemented; Stub!");
                 break;
+            case android.R.id.home:
+                Log.d(TAG, "onOptionsItemSelected: home button pressed");
+                AddEditActivityFragment fragment = (AddEditActivityFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.task_details_container);
+                if (fragment.canClose()) {
+                    return super.onOptionsItemSelected(item);
+                } else {
+                    showConfirmationDialog(DIALOG_ID_CANCEL_EDIT_UP);
+                    return true;
+                }
         }
 
         return super.onOptionsItemSelected(item);
@@ -142,25 +186,25 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     }
 
     private void taskEditAddRequest(@Nullable Task task) {
-        if (isTwoPane) {
-            Log.d(TAG, "taskEditAddRequest: in two-pane mode (tablet)");
 
-            AddEditActivityFragment fragment = new AddEditActivityFragment();
+        AddEditActivityFragment fragment = new AddEditActivityFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(Task.class.getSimpleName(), task);
+        fragment.setArguments(args);
 
-            Bundle args = new Bundle();
-            args.putSerializable(Task.class.getSimpleName(), task);
-            fragment.setArguments(args);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            getSupportFragmentManager().beginTransaction()
-                .replace(R.id.task_details_container, fragment)
-                .commit();
-        } else {
+        getSupportFragmentManager().beginTransaction()
+            .replace(R.id.task_details_container, fragment)
+            .commit();
+
+        if (!isTwoPane) {
             Log.d(TAG, "taskEditAddRequest: in single-pane mode (phone)");
-            Intent detailIntent = new Intent(this, AddEditActivity.class);
-            if (task != null) {
-                detailIntent.putExtra(Task.class.getSimpleName(), task);
-            }
-            startActivity(detailIntent);
+            View mainFragment = findViewById(R.id.fragment);
+            View addEditLayout = findViewById(R.id.task_details_container);
+            mainFragment.setVisibility(View.GONE);
+            addEditLayout.setVisibility(View.VISIBLE);
+            Log.d(TAG, "taskEditAddRequest: exiting");
         }
     }
 
@@ -175,6 +219,8 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                 break;
             case DIALOG_ID_CANCEL_EDIT:
                 break;
+            case DIALOG_ID_CANCEL_EDIT_UP:
+                break;
         }
     }
 
@@ -185,6 +231,27 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
             case DIALOG_ID_DELETE:
                 break;
             case DIALOG_ID_CANCEL_EDIT:
+            case DIALOG_ID_CANCEL_EDIT_UP:
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                Fragment fragment = fragmentManager.findFragmentById(R.id.task_details_container);
+                if (fragment != null) {
+                    getSupportFragmentManager().beginTransaction()
+                        .remove(fragment)
+                        .commit();
+                    if (isTwoPane) {
+                        if (dialogID == DIALOG_ID_CANCEL_EDIT) {
+                            finish();
+                        }
+                    } else {
+                        View addEditLayout = findViewById(R.id.task_details_container);
+                        View mainFragment = findViewById(R.id.fragment);
+
+                        addEditLayout.setVisibility(View.GONE);
+                        mainFragment.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    finish();
+                }
                 break;
         }
     }
@@ -203,14 +270,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         if (fragment == null || fragment.canClose()) {
             super.onBackPressed();
         } else {
-            AppDialog dialog = new AppDialog();
-            Bundle args = new Bundle();
-            args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_DELETE);
-            args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.cancelEditDialogMessage));
-            args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.cancelEditDialog_positive_caption);
-            args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDialog_negative_caption);
-            dialog.setArguments(args);
-            dialog.show(getSupportFragmentManager(), null);
+            showConfirmationDialog(DIALOG_ID_CANCEL_EDIT);
         }
     }
 
@@ -220,5 +280,17 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
+    }
+
+    private void showConfirmationDialog(int dialogID) {
+        AppDialog dialog = new AppDialog();
+        Bundle args = new Bundle();
+        args.putInt(AppDialog.DIALOG_ID, dialogID);
+        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.cancelEditDialogMessage));
+        args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.cancelEditDialog_positive_caption);
+        args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDialog_negative_caption);
+
+        dialog.setArguments(args);
+        dialog.show(getSupportFragmentManager(), null);
     }
 }

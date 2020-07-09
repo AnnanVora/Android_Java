@@ -11,9 +11,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class AddEditActivity extends AppCompatActivity implements AddEditActivityFragment.OnSaveClicked,
-                                    AppDialog.DialogEvents {
-    private static final String TAG = "AddEditActivity";
+    AppDialog.DialogEvents {
     public static final int DIALOG_ID_CANCEL_EDIT = 1;
+    private static final String TAG = "AddEditActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,15 +24,18 @@ public class AddEditActivity extends AppCompatActivity implements AddEditActivit
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        AddEditActivityFragment fragment = new AddEditActivityFragment();
+        if (savedInstanceState == null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
 
-        Bundle args = getIntent().getExtras();
-        fragment.setArguments(args);
+            AddEditActivityFragment fragment = new AddEditActivityFragment();
+            Bundle args = getIntent().getExtras();
+            fragment.setArguments(args);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment, fragment);
-        fragmentTransaction.commit();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment, fragment);
+            fragmentTransaction.commit();
+
+        }
     }
 
 
@@ -94,6 +97,7 @@ public class AddEditActivity extends AppCompatActivity implements AddEditActivit
         Log.d(TAG, "onBackPressed: called");
         FragmentManager fragmentManager = getSupportFragmentManager();
         AddEditActivityFragment fragment = (AddEditActivityFragment) fragmentManager.findFragmentById(R.id.fragment);
+        assert fragment != null;
         if (fragment.canClose()) {
             super.onBackPressed();
         } else {

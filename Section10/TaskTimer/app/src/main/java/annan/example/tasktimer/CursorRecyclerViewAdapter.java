@@ -19,6 +19,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
 
     interface OnTaskClickListener {
         void onEditClick(Task task);
+
         void onDeleteClick(Task task);
     }
 
@@ -49,9 +50,9 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
             }
 
             final Task task = new Task(cursor.getLong(cursor.getColumnIndex(TasksContract.Columns._ID)),
-                                 cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASKS_NAME)),
-                                 cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASKS_DESCRIPTION)),
-                                 cursor.getInt(cursor.getColumnIndex(TasksContract.Columns.TASKS_SORTORDER)));
+                cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASKS_NAME)),
+                cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASKS_DESCRIPTION)),
+                cursor.getInt(cursor.getColumnIndex(TasksContract.Columns.TASKS_SORTORDER)));
 
             holder.name.setText(task.getName());
             holder.description.setText(task.getDescription());
@@ -95,6 +96,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
     /**
      * Swap in the new cursor, returning the old cursor
      * The returned old cursor is not closed
+     *
      * @param newCursor The new cursor to be used
      * @return The old cursor, or null if there wasn't null
      * If the given cursor is the same instance as the new one, the method returns null
