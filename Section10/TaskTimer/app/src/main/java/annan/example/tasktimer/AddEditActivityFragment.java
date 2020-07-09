@@ -120,7 +120,7 @@ public class AddEditActivityFragment extends Fragment {
                         }
                         if (values.size() != 0) {
                             Log.d(TAG, "onClick: updating tasks");
-                            contentResolver.update(TasksContract.buildTaskUri(task.get_id()), values, null, null);
+                            contentResolver.update(TasksContract.buildTaskUri(task.getID()), values, null, null);
                         }
                         break;
                     case ADD:

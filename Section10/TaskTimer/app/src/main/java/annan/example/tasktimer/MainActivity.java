@@ -1,5 +1,6 @@
 package annan.example.tasktimer;
 
+import android.annotation.NonNull;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     private static final String TASK_ID_STRING = "TaskID";
     private boolean isTwoPane = false;
     private AlertDialog dialog = null;
+    private Timing currentTiming = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,20 +168,20 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     }
 
     @Override
-    public void onEditClick(Task task) {
+    public void onEditClick(@NonNull Task task) {
         taskEditAddRequest(task);
     }
 
     @Override
-    public void onDeleteClick(Task task) {
+    public void onDeleteClick(@NonNull Task task) {
         Log.d(TAG, "onDeleteClick: starts");
 
         AppDialog dialog = new AppDialog();
         Bundle args = new Bundle();
         args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_DELETE);
-        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.deldiag_message, task.get_id(), task.getName()));
+        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.deldiag_message, task.getID(), task.getName()));
         args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.deldiag_positive_caption);
-        args.putLong(TASK_ID_STRING, task.get_id());
+        args.putLong(TASK_ID_STRING, task.getID());
 
         dialog.setArguments(args);
         dialog.show(getSupportFragmentManager(), null);
@@ -292,5 +294,24 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
         dialog.setArguments(args);
         dialog.show(getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void onTaskLongClick(@NonNull Task task) {
+        Log.d(TAG, "onTaskLongClick: called");
+        Toast.makeText(this, "Task " + task.getID() + " clicked", Toast.LENGTH_SHORT).show();
+        TextView taskName = findViewById(R.id.current_task);
+        if (this.currentTiming != null) {
+            if (task.getID() == this.currentTiming.getTask().getID()) {
+                this.currentTiming = null;
+                taskName.setText(R.string.no_task_message);
+            } else {
+                this.currentTiming = new Timing(task);
+                taskName.setText("Timing: \"" + this.currentTiming.getTask().getName() + '\"');
+            }
+        } else {
+            this.currentTiming = new Timing(task);
+            taskName.setText("Timing " + this.currentTiming.getTask().getName());
+        }
     }
 }

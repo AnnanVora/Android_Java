@@ -7,36 +7,35 @@ import java.io.Serializable;
 class Task implements Serializable {
 
     public static final long serialVersionUID = 20161120L;
-
-    private long _id;
     private final String name;
     private final String description;
     private final int sortOrder;
+    private long _id;
 
-    public Task(long id, String name, String description, int sortOrder) {
+    Task(long id, String name, String description, int sortOrder) {
         this._id = id;
         this.name = name;
         this.description = description;
         this.sortOrder = sortOrder;
     }
 
-    public long get_id() {
+    long getID() {
         return _id;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
-    public int getSortOrder() {
+    int getSortOrder() {
         return sortOrder;
     }
 
-    public void setID(long id) {
+    void setID(long id) {
         this._id = id;
     }
 

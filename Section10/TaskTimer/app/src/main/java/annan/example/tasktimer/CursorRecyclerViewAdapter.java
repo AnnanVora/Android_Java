@@ -18,9 +18,9 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
     private OnTaskClickListener listener;
 
     interface OnTaskClickListener {
-        void onEditClick(Task task);
-
-        void onDeleteClick(Task task);
+        void onEditClick(@NonNull Task task);
+        void onDeleteClick(@NonNull Task task);
+        void onTaskLongClick(@NonNull Task task);
     }
 
     public CursorRecyclerViewAdapter(Cursor cursor, OnTaskClickListener listener) {
@@ -56,8 +56,8 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
 
             holder.name.setText(task.getName());
             holder.description.setText(task.getDescription());
-            holder.editButton.setVisibility(View.VISIBLE); // TODO add onClick listener
-            holder.deleteButton.setVisibility(View.VISIBLE); // TODO add onClick listener
+            holder.editButton.setVisibility(View.VISIBLE);
+            holder.deleteButton.setVisibility(View.VISIBLE);
 
             View.OnClickListener buttonListener = new View.OnClickListener() {
                 @Override
@@ -79,8 +79,21 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
                 }
             };
 
+            View.OnLongClickListener buttonLongListener = new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Log.d(TAG, "onLongClick: starts");
+                    if (CursorRecyclerViewAdapter.this.listener != null) {
+                        CursorRecyclerViewAdapter.this.listener.onTaskLongClick(task);
+                        return false;
+                    }
+                    return false;
+                }
+            };
+
             holder.editButton.setOnClickListener(buttonListener);
             holder.deleteButton.setOnClickListener(buttonListener);
+            holder.itemView.setOnLongClickListener(buttonLongListener);
         }
     }
 
@@ -121,6 +134,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
         TextView description;
         ImageButton editButton;
         ImageButton deleteButton;
+        View itemView;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -128,6 +142,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
             this.description = itemView.findViewById(R.id.tli_description);
             this.editButton = itemView.findViewById(R.id.tli_edit);
             this.deleteButton = itemView.findViewById(R.id.tli_delete);
+            this.itemView = itemView;
         }
     }
 }

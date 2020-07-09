@@ -1,5 +1,6 @@
 package annan.example.tasktimer;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,10 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.security.InvalidParameterException;
 
 
-public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+    CursorRecyclerViewAdapter.OnTaskClickListener {
 
-    private static final String TAG = "MainActivityFragment";
     public static final int LOADER_ID = 0;
+    private static final String TAG = "MainActivityFragment";
     private CursorRecyclerViewAdapter adapter;
 
     public MainActivityFragment() {
@@ -33,7 +35,38 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onActivityCreated: starts");
         super.onActivityCreated(savedInstanceState);
+        Activity activity = getActivity();
+        if (!(activity instanceof CursorRecyclerViewAdapter.OnTaskClickListener)) {
+            throw new ClassCastException(activity.getClass().getSimpleName() + " must implement CursorRecyclerViewAdapter.OnTaskClickListener");
+        }
         LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onEditClick(@NonNull Task task) {
+        Log.d(TAG, "onEditClick: called");
+        CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
+        if (listener != null) {
+            listener.onEditClick(task);
+        }
+    }
+
+    @Override
+    public void onDeleteClick(@NonNull Task task) {
+        Log.d(TAG, "onDeleteClick: called");
+        CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
+        if (listener != null) {
+            listener.onDeleteClick(task);
+        }
+    }
+
+    @Override
+    public void onTaskLongClick(@NonNull Task task) {
+        Log.d(TAG, "onTaskLongClick: called");
+        CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
+        if (listener != null) {
+            listener.onTaskLongClick(task);
+        }
     }
 
     @Override
@@ -44,11 +77,20 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         RecyclerView recyclerView = view.findViewById(R.id.task_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new CursorRecyclerViewAdapter(null, (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity());
+        if (adapter == null) {
+            adapter = new CursorRecyclerViewAdapter(null, this);
+        }
         recyclerView.setAdapter(adapter);
 
         Log.d(TAG, "onCreateView: returning");
         return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: starts");
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @NonNull
