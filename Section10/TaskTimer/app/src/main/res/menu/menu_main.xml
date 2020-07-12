@@ -4,7 +4,7 @@
     tools:context="annan.example.tasktimer.MainActivity">
     <item
         android:id="@+id/menumain_addTask"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/add"
         android:orderInCategory="100"
         android:title="@string/menutitle_addTask"
         app:showAsAction="ifRoom" />
@@ -15,7 +15,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/menumain_showAbout"
-        android:icon="@android:drawable/ic_menu_info_details"
+        android:icon="@drawable/info"
         android:orderInCategory="103"
         android:title="@string/menumain_showAbout"
         app:showAsAction="ifRoom" />
@@ -27,7 +27,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/menumain_showDurations"
-        android:icon="@android:drawable/ic_menu_view"
+        android:icon="@drawable/view_reports"
         android:orderInCategory="101"
         android:title="@string/menumain_showDurations"
         app:showAsAction="ifRoom" />

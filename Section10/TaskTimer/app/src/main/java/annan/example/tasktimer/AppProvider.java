@@ -18,13 +18,9 @@ import androidx.annotation.Nullable;
  */
 public class AppProvider extends ContentProvider {
 
-    private static final String TAG = "AppProvider";
-    private AppDatabase openHelper;
-    public static final UriMatcher uriMatcher = buildUriMatcher();
-
     static final String CONTENT_AUTHORITY = "annan.example.tasktimer.provider";
     public static final Uri CONTENT_AUTHORITY_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
-
+    private static final String TAG = "AppProvider";
     private static final int TASKS = 100;
     private static final int TASKS_ID = 101;
     private static final int TIMINGS = 200;
@@ -33,7 +29,22 @@ public class AppProvider extends ContentProvider {
 //    private static final int TASK_TIMINGS_ID     = 301;
     private static final int TASKS_DURATIONS = 400;
     private static final int TASKS_DURATIONS_ID = 401;
+    public static final UriMatcher uriMatcher = buildUriMatcher();
+    private AppDatabase openHelper;
 
+    private static UriMatcher buildUriMatcher() {
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+        matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME, TASKS);
+        matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME + "/#", TASKS_ID);
+        matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME + "/#", TASKS_ID);
+        matcher.addURI(CONTENT_AUTHORITY, TimingsContract.TABLE_NAME, TIMINGS);
+        matcher.addURI(CONTENT_AUTHORITY, TimingsContract.TABLE_NAME + "/#", TIMINGS_ID);
+        matcher.addURI(CONTENT_AUTHORITY, DurationsContract.TABLE_NAME, TASKS_DURATIONS);
+        matcher.addURI(CONTENT_AUTHORITY, DurationsContract.TABLE_NAME + "/#", TASKS_DURATIONS_ID);
+
+        return matcher;
+    }
 
     @Override
     public boolean onCreate() {
@@ -42,6 +53,7 @@ public class AppProvider extends ContentProvider {
     }
 
     @Nullable
+    @SuppressWarnings("ConstantConditions")
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         Log.d(TAG, "query: called with URI " + uri);
@@ -67,14 +79,14 @@ public class AppProvider extends ContentProvider {
                 long timingID = TimingsContract.getTimingID(uri);
                 queryBuilder.appendWhere(TimingsContract.Columns._ID + " = " + timingID);
                 break;
-//            case TASKS_DURATIONS:
-//                queryBuilder.setTables(DurationsContract.TABLE_NAME);
-//                break;
-//            case TASKS_DURATIONS_ID:
-//                queryBuilder.setTables(DurationsContract.TABLE_NAME);
-//                long durationID = DurationsContract.getDurationID(uri);
-//                queryBuilder.appendWhere(DurationsContract.Columns._ID + " = " + durationID);
-//                break;
+            case TASKS_DURATIONS:
+                queryBuilder.setTables(DurationsContract.TABLE_NAME);
+                break;
+            case TASKS_DURATIONS_ID:
+                queryBuilder.setTables(DurationsContract.TABLE_NAME);
+                long durationID = DurationsContract.getDurationId(uri);
+                queryBuilder.appendWhere(DurationsContract.Columns._ID + " = " + durationID);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
 
@@ -101,16 +113,17 @@ public class AppProvider extends ContentProvider {
                 return TimingsContract.CONTENT_TYPE;
             case TIMINGS_ID:
                 return TimingsContract.CONTENT_ITEM_TYPE;
-//            case TASKS_DURATIONS:
-//                return DurationsContract.CONTENT_TYPE;
-//            case TASKS_DURATIONS_ID:
-//                return DurationsContract.CONTENT_ITEM_TYPE;
+            case TASKS_DURATIONS:
+                return DurationsContract.CONTENT_TYPE;
+            case TASKS_DURATIONS_ID:
+                return DurationsContract.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("unknown Uri: " + uri);
         }
     }
 
     @Nullable
+    @SuppressWarnings("ConstantConditions")
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
         Log.d(TAG, "Entering insert called with uri " + uri);
@@ -155,6 +168,7 @@ public class AppProvider extends ContentProvider {
         return returnUri;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         Log.d(TAG, "delete: called with uri " + uri);
@@ -208,6 +222,7 @@ public class AppProvider extends ContentProvider {
         return count;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         Log.d(TAG, "update: called with uri " + uri);
@@ -260,19 +275,5 @@ public class AppProvider extends ContentProvider {
 
         Log.d(TAG, "update: exiting, returning " + count);
         return count;
-    }
-
-    private static UriMatcher buildUriMatcher() {
-        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-
-        matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME, TASKS);
-        matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME + "/#", TASKS_ID);
-        matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME + "/#", TASKS_ID);
-        matcher.addURI(CONTENT_AUTHORITY, TimingsContract.TABLE_NAME, TIMINGS);
-        matcher.addURI(CONTENT_AUTHORITY, TimingsContract.TABLE_NAME + "/#", TIMINGS_ID);
-//        matcher.addURI(CONTENT_AUTHORITY, DurationsContract.TABLE_NAME, TASKS_DURATIONS);
-//        matcher.addURI(CONTENT_AUTHORITY, DurationsContract.TABLE_NAME + "/#", TASKS_DURATIONS_ID);
-
-        return matcher;
     }
 }

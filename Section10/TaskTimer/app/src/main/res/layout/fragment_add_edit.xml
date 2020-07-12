@@ -14,10 +14,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:ems="10"
         android:hint="@string/addedit_name_hint"
         android:inputType="textNoSuggestions"
-        android:maxLength="64"
-        android:ems="10" />
+        android:maxLength="64" />
 
     <EditText
         android:id="@+id/addedit_description"
@@ -26,10 +26,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:ems="10"
         android:hint="@string/addedit_description_hint"
         android:inputType="textMultiLine"
-        android:maxLength="256"
-        android:ems="10" />
+        android:maxLength="256" />
 
     <EditText
         android:id="@+id/addedit_sortOrder"
@@ -38,10 +38,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:ems="10"
         android:hint="@string/addedit_sortorder_hint"
         android:inputType="number"
-        android:maxLength="9"
-        android:ems="10" />
+        android:maxLength="9" />
 
     <Button
         android:id="@+id/addedit_save"

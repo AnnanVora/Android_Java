@@ -15,20 +15,12 @@ import java.util.NoSuchElementException;
 
 public class AppDialog extends DialogFragment {
 
-    private static final String TAG = "AppDialog";
     public static final String DIALOG_ID = "id";
     public static final String DIALOG_MESSAGE = "message";
     public static final String DIALOG_POSITIVE_RID = "positive_rid";
     public static final String DIALOG_NEGATIVE_RID = "negative_rid";
+    private static final String TAG = "AppDialog";
     private DialogEvents dialogEvents;
-
-    interface DialogEvents {
-        void onPositiveDialogResult(int dialogID, Bundle args);
-
-        void onNegativeDialogResult(int dialogID, Bundle args);
-
-        void onDialogCancel(int dialogID);
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -106,5 +98,13 @@ public class AppDialog extends DialogFragment {
             int dialogID = getArguments().getInt(DIALOG_ID);
             dialogEvents.onDialogCancel(dialogID);
         }
+    }
+
+    interface DialogEvents {
+        void onPositiveDialogResult(int dialogID, Bundle args);
+
+        void onNegativeDialogResult(int dialogID, Bundle args);
+
+        void onDialogCancel(int dialogID);
     }
 }

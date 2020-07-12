@@ -17,12 +17,6 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
     private Cursor cursor;
     private OnTaskClickListener listener;
 
-    interface OnTaskClickListener {
-        void onEditClick(@NonNull Task task);
-        void onDeleteClick(@NonNull Task task);
-        void onTaskLongClick(@NonNull Task task);
-    }
-
     public CursorRecyclerViewAdapter(Cursor cursor, OnTaskClickListener listener) {
         Log.d(TAG, "CursorRecyclerViewAdapter: constructor called");
         this.cursor = cursor;
@@ -99,11 +93,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
 
     @Override
     public int getItemCount() {
-        if (cursor == null || (cursor.getCount()) == 0) {
-            return 1;
-        } else {
-            return cursor.getCount();
-        }
+        return cursor != null ? cursor.getCount() : 0;
     }
 
     /**
@@ -118,14 +108,24 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
         if (newCursor == cursor) {
             return null;
         }
+
+        int numItems = getItemCount();
         final Cursor oldCursor = cursor;
         cursor = newCursor;
         if (newCursor != null) {
             notifyDataSetChanged();
         } else {
-            notifyItemRangeRemoved(0, getItemCount());
+            notifyItemRangeRemoved(0, numItems);
         }
         return oldCursor;
+    }
+
+    interface OnTaskClickListener {
+        void onEditClick(@NonNull Task task);
+
+        void onDeleteClick(@NonNull Task task);
+
+        void onTaskLongClick(@NonNull Task task);
     }
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {

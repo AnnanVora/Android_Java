@@ -1,12 +1,15 @@
 package annan.example.tasktimer;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +29,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public static final int LOADER_ID = 0;
     private static final String TAG = "MainActivityFragment";
     private CursorRecyclerViewAdapter adapter;
+    private Timing currentTiming = null;
 
     public MainActivityFragment() {
         Log.d(TAG, "MainActivityFragment: starts");
@@ -40,6 +44,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             throw new ClassCastException(activity.getClass().getSimpleName() + " must implement CursorRecyclerViewAdapter.OnTaskClickListener");
         }
         LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this);
+        setTimingText(this.currentTiming);
     }
 
     @Override
@@ -63,9 +68,43 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onTaskLongClick(@NonNull Task task) {
         Log.d(TAG, "onTaskLongClick: called");
-        CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
-        if (listener != null) {
-            listener.onTaskLongClick(task);
+        if (this.currentTiming != null) {
+            if (task.getID() == this.currentTiming.getTask().getID()) {
+                saveTiming(this.currentTiming);
+                this.currentTiming = null;
+                setTimingText(null);
+            } else {
+                saveTiming(this.currentTiming);
+                this.currentTiming = new Timing(task);
+                setTimingText(this.currentTiming);
+            }
+        } else {
+            this.currentTiming = new Timing(task);
+            setTimingText(this.currentTiming);
+        }
+    }
+
+    private void saveTiming(@NonNull Timing currentTiming) {
+        Log.d(TAG, "saveTiming: starts");
+        currentTiming.setDuration();
+
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        ContentValues values = new ContentValues();
+
+        values.put(TimingsContract.Columns.TIMINGS_TASK_ID, currentTiming.getTask().getID());
+        values.put(TimingsContract.Columns.TIMINGS_START_TIME, currentTiming.getStartTime());
+        values.put(TimingsContract.Columns.TIMINGS_DURATION, currentTiming.getDuration());
+        contentResolver.insert(TimingsContract.CONTENT_URI, values);
+
+        Log.d(TAG, "saveTiming: ends");
+    }
+
+    private void setTimingText(Timing timing) {
+        TextView taskName = getActivity().findViewById(R.id.current_task);
+        if (timing != null) {
+            taskName.setText(getString(R.string.current_timing_text, timing.getTask().getName()));
+        } else {
+            taskName.setText(R.string.no_task_message);
         }
     }
 

@@ -1,6 +1,5 @@
 package annan.example.tasktimer;
 
-import android.annotation.NonNull;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -15,12 +14,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import annan.example.tasktimer.debug.TestData;
 
 public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener,
     AddEditActivityFragment.OnSaveClicked,
@@ -33,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     private static final String TASK_ID_STRING = "TaskID";
     private boolean isTwoPane = false;
     private AlertDialog dialog = null;
-    private Timing currentTiming = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
         View addEditLayout = findViewById(R.id.task_details_container);
         View mainFragment = findViewById(R.id.fragment);
+//        FIXME
+        findViewById(R.id.menumain_settings).setVisibility(View.INVISIBLE);
 
         if (isTwoPane) {
             Log.d(TAG, "onCreate: twoPaneMode");
@@ -58,9 +61,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
             addEditLayout.setVisibility(View.VISIBLE);
         } else if (editing) {
             Log.d(TAG, "onCreate: singlePaneEditing");
-            {
-                mainFragment.setVisibility(View.GONE);
-            }
+            mainFragment.setVisibility(View.GONE);
         } else {
             Log.d(TAG, "onCreate: singlePaneAdding");
             mainFragment.setVisibility(View.VISIBLE);
@@ -88,6 +89,10 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (BuildConfig.DEBUG) {
+            MenuItem gen = menu.findItem(R.id.menumain_generate);
+            gen.setVisible(true);
+        }
         return true;
     }
 
@@ -100,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                 taskEditAddRequest(null);
                 break;
             case R.id.menumain_showDurations:
-                Log.d(TAG, "onOptionsItemSelected: Not implemented; Stub!");
+                startActivity(new Intent(this, DurationsReportActivity.class));
                 break;
             case R.id.menumain_settings:
                 Log.d(TAG, "onOptionsItemSelected: Not implemented; Stub!");
@@ -109,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                 showAboutDialog();
                 break;
             case R.id.menumain_generate:
-                Log.d(TAG, "onOptionsItemSelected: Not implemented; Stub!");
+                TestData.generateTestData(getContentResolver());
                 break;
             case android.R.id.home:
                 Log.d(TAG, "onOptionsItemSelected: home button pressed");
@@ -298,20 +303,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     @Override
     public void onTaskLongClick(@NonNull Task task) {
-        Log.d(TAG, "onTaskLongClick: called");
-        Toast.makeText(this, "Task " + task.getID() + " clicked", Toast.LENGTH_SHORT).show();
-        TextView taskName = findViewById(R.id.current_task);
-        if (this.currentTiming != null) {
-            if (task.getID() == this.currentTiming.getTask().getID()) {
-                this.currentTiming = null;
-                taskName.setText(R.string.no_task_message);
-            } else {
-                this.currentTiming = new Timing(task);
-                taskName.setText("Timing: \"" + this.currentTiming.getTask().getName() + '\"');
-            }
-        } else {
-            this.currentTiming = new Timing(task);
-            taskName.setText("Timing " + this.currentTiming.getTask().getName());
-        }
+//      Required to satisfy interface
+        Log.d(TAG, "onTaskLongClick: Stub!");
     }
 }

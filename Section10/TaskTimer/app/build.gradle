@@ -6,11 +6,11 @@ android {
 
     defaultConfig {
         applicationId "annan.example.tasktimer"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 29
-        versionCode 3
-        versionName "4.9.9-alpha"
-
+        versionCode 8
+        versionName "8.2.4-canary"
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -18,6 +18,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
         }
     }
 }

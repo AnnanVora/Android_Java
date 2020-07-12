@@ -23,6 +23,10 @@ class Task implements Serializable {
         return _id;
     }
 
+    void setID(long id) {
+        this._id = id;
+    }
+
     String getName() {
         return name;
     }
@@ -33,10 +37,6 @@ class Task implements Serializable {
 
     int getSortOrder() {
         return sortOrder;
-    }
-
-    void setID(long id) {
-        this._id = id;
     }
 
     @NonNull
