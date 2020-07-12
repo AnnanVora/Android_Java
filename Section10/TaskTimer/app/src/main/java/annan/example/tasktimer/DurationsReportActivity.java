@@ -8,6 +8,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.DatePicker;
 
 import androidx.annotation.NonNull;
@@ -26,8 +27,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class DurationsReportActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
-    DatePickerDialog.OnDateSetListener, AppDialog.DialogEvents {
+public class DurationsReportActivity extends AppCompatActivity implements
+    LoaderManager.LoaderCallbacks<Cursor>,
+    DatePickerDialog.OnDateSetListener,
+    AppDialog.DialogEvents,
+    View.OnClickListener {
 
     public static final String CURRENT_DATE = "CURRENT_DATE";
     public static final String DISPLAY_WEEK = "DISPLAY_WEEK";
@@ -65,6 +69,13 @@ public class DurationsReportActivity extends AppCompatActivity implements Loader
             displayWeek = savedInstanceState.getBoolean(DISPLAY_WEEK, true);
         }
         applyFilter();
+
+        findViewById(R.id.td_name_heading).setOnClickListener(this);
+        if (findViewById(R.id.td_description_heading) != null) {
+            findViewById(R.id.td_description_heading).setOnClickListener(this);
+        }
+        findViewById(R.id.td_start_heading).setOnClickListener(this);
+        findViewById(R.id.td_duration_heading).setOnClickListener(this);
 
         RecyclerView recyclerView = findViewById(R.id.td_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -248,7 +259,7 @@ public class DurationsReportActivity extends AppCompatActivity implements Loader
     private void deleteRecords(long timeInMillis) {
         Log.d(TAG, "deleteRecords: starts");
 
-        String[] selectionArgs = new String[] {Long.toString(timeInMillis / 1000)};
+        String[] selectionArgs = new String[]{Long.toString(timeInMillis / 1000)};
         String selection = TimingsContract.Columns.TIMINGS_START_TIME + " < ?";
         Log.d(TAG, "deleteRecords: Deleting records prior to " + (timeInMillis / 1000));
 
@@ -279,5 +290,27 @@ public class DurationsReportActivity extends AppCompatActivity implements Loader
         super.onSaveInstanceState(outState);
         outState.putLong(CURRENT_DATE, calendar.getTimeInMillis());
         outState.putBoolean(DISPLAY_WEEK, displayWeek);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.d(TAG, "onClick: starts");
+
+        switch (v.getId()) {
+            case R.id.td_name_heading:
+                args.putString(SORT_ORDER_PARAM, DurationsContract.Columns.DURATIONS_NAME);
+                break;
+            case R.id.td_description_heading:
+                args.putString(SORT_ORDER_PARAM, DurationsContract.Columns.DURATIONS_DESCRIPTION);
+                break;
+            case R.id.td_start_heading:
+                args.putString(SORT_ORDER_PARAM, DurationsContract.Columns.DURATIONS_START_DATE);
+                break;
+            case R.id.td_duration_heading:
+                args.putString(SORT_ORDER_PARAM, DurationsContract.Columns.DURATIONS_DURATION);
+                break;
+        }
+
+        LoaderManager.getInstance(this).restartLoader(LOADER_ID, args, this);
     }
 }
