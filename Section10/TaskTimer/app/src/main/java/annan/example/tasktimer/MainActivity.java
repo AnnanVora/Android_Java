@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         View addEditLayout = findViewById(R.id.task_details_container);
         View mainFragment = findViewById(R.id.fragment);
 //        FIXME
-        findViewById(R.id.menumain_settings).setVisibility(View.INVISIBLE);
+//        findViewById(R.id.menumain_settings).setVisibility(View.INVISIBLE);
 
         if (isTwoPane) {
             Log.d(TAG, "onCreate: twoPaneMode");

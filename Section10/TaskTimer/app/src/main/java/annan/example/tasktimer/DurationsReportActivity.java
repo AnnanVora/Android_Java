@@ -264,7 +264,7 @@ public class DurationsReportActivity extends AppCompatActivity implements
         Log.d(TAG, "deleteRecords: Deleting records prior to " + (timeInMillis / 1000));
 
         getContentResolver().delete(TimingsContract.CONTENT_URI, selection, selectionArgs);
-        LoaderManager.getInstance(this).restartLoader(LOADER_ID, args, this);
+        LoaderManager.getInstance(this).restartLoader(LOADER_ID, this.args, this);
         Log.d(TAG, "deleteRecords: ends");
     }
 
