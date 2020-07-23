@@ -44,6 +44,16 @@
     <string name="rm_title_filter_date">Set Report Date</string>
     <string name="rm_title_delete">Delete old timings</string>
     <string name="date_title_filter">Select Date for report</string>
-    <string name="date_title_delete">Select Date to delete upto</string>
+    <string name="date_title_delete">Select Date to delete up-to</string>
     <string name="delete_timings_message">\"Are you sure you want to delete all timings before %1s?"</string>
+    <string name="settings_text_ignore">Ignore tasks which have been timed for less than…</string>
+    <string name="settings_start_day">Choose the start of your week</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <string name="durations_report_activity_title">Reports</string>
 </resources>

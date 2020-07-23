@@ -11,10 +11,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".DurationsReportActivity"
-            android:label="Reports"
+            android:label="@string/durations_report_activity_title"
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".MainActivity">
-
         </activity>
         <activity
             android:name=".MainActivity"

@@ -92,6 +92,9 @@ public class AppProvider extends ContentProvider {
 
         }
 
+        selection = TimingsContract.Columns.TIMINGS_DURATION + " < " + "?";
+        selectionArgs[0] = Integer.toString(SettingsActivity.finalProgress);
+
         SQLiteDatabase db = openHelper.getReadableDatabase();
         Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         Log.d(TAG, "query: rows in returned cursor = " + cursor.getCount());
