@@ -12,4 +12,4 @@
 /captures
 .externalNativeBuild
 .cxx
-app/src/main/java/annan/example/org/YoutubeActivity.java
+/app/src/main/java/annan/example/org/YoutubeActivity.java
