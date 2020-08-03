@@ -177,7 +177,7 @@ public class DurationsReportActivity extends AppCompatActivity implements
         if (this.displayWeek) {
             Date currentCalDate = this.calendar.getTime();
             int dayOfWeek = this.calendar.get(GregorianCalendar.DAY_OF_WEEK);
-            int weekStart = SettingsActivity.finalProgress;
+            int weekStart = this.calendar.getFirstDayOfWeek();
             Log.d(TAG, "applyFilter: first day of calendar week id " + weekStart);
             Log.d(TAG, "applyFilter: dayOfWeek = " + dayOfWeek);
             Log.d(TAG, "applyFilter: date is " + currentCalDate);
@@ -266,7 +266,7 @@ public class DurationsReportActivity extends AppCompatActivity implements
         getContentResolver().delete(TimingsContract.CONTENT_URI, selection, selectionArgs);
         applyFilter();
         LoaderManager.getInstance(this).restartLoader(LOADER_ID, this.args, this);
-        Log.d(TAG, "deleteRecords: ends");
+	Log.d(TAG, "deleteRecords: ends");
     }
 
     @Override

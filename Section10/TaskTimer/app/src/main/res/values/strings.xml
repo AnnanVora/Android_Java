@@ -45,7 +45,7 @@
     <string name="rm_title_delete">Delete old timings</string>
     <string name="date_title_filter">Select Date for report</string>
     <string name="date_title_delete">Select Date to delete up-to</string>
-    <string name="delete_timings_message">\"Are you sure you want to delete all timings before %1s?"</string>
+    <string name="delete_timings_message">Are you sure you want to delete all timings before %1s?</string>
     <string name="settings_text_ignore">Ignore tasks which have been timed for less than…</string>
     <string name="settings_start_day">Choose the start of your week</string>
     <string name="monday">Monday</string>
